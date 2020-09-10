@@ -1,0 +1,86 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.smbms.dao.user.USERMapper">
+    <!--    添加用户-->
+    <insert id="add"  parameterType="User">
+        insert into smbms_user (userCode,userName,userPassword,
+        userRole,gender,birthday,phone,address,creationDate,createdBy,idPicPath,workPicPath) values (#{userCode},#{userName}
+        ,#{userPassword},#{userRole},#{gender},#{birthday},#{phone},#{address},#{creationDate}
+        ,#{createdBy},#{idPicPath},#{workPicPath})
+    </insert>
+    <!--    修改用户信息-->
+    <update id="modify">
+        update smbms_user
+        <trim prefix="set" suffixOverrides="," suffix="where id = #{id}">
+            <if test="userName!=null and userName!=''">
+                userName = #{userName},
+            </if>
+            <if test="gender!=null and gender!=''">
+                gender = #{gender},
+            </if>
+            <if test="birthday!=null">
+                birthday = #{birthday},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone = #{phone},
+            </if>
+            <if test="address!=null and address!=''">
+                address = #{address},
+            </if>
+            <if test="userRole!=0 ">
+                userRole = #{userRole},
+            </if>
+            <if test="modifyBy!=null and modifyBy!=''">
+                modifyBy = #{modifyBy},
+            </if>
+            <if test="modifyDate!=null">
+                modifyDate = #{modifyDate},
+            </if>
+            <if test="idPicPath!=null">
+                idPicPath = #{idPicPath},
+            </if>
+            <if test="workPicPath!=null">
+                workPicPath = #{workPicPath}
+            </if>
+        </trim>
+    </update>
+    <!--    -->
+    <update id="updatePwd" parameterType="User">
+        update smbms_user set userPassword= #{pwd} where id = #{id}
+    </update>
+    <!--    根据id删除用户-->
+    <delete id="deleteUserById" parameterType="User">
+        delete from smbms_user where id= #{delId}
+    </delete>
+
+    <select id="getLoginUser" resultType="cn.smbms.pojo.User">
+        select * from smbms_user where userCode=#{userCode}
+    </select>
+
+    <select id="getUserList" resultType="cn.smbms.pojo.User">
+        select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where 1=1
+        <if test="userName !=null and userName!=''">
+            and u.userName like concat ("%",#{userName},"%")
+        </if>
+        <if test="userRole !=0">
+            and u.userRole = #{userRole}
+        </if>
+        and u.userRole = r.id order by creationDate DESC limit #{currentPageNo},#{pageSize}
+    </select>
+
+    <select id="getUserCount" resultType="java.lang.Integer">
+        select count(1) as count from smbms_user u,smbms_role r where u.userRole = r.id
+        <if test="userName!=null and userName!=''">
+            and u.userName like concat ("%",#{userName},"%")
+        </if>
+        <if test="userRole !=0">
+            and u.userRole = #{userRole}
+        </if>
+    </select>
+    <select id="getUserById" resultType="cn.smbms.pojo.User">
+        select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where u.id= #{id}
+         and u.userRole = r.id
+    </select>
+</mapper>

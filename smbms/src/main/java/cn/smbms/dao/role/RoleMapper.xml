@@ -1,0 +1,28 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.smbms.dao.role.RMapper">
+    <insert id="add">
+        insert into smbms_role(roleCode,roleName,creationDate) values (
+        #{roleCode},#{roleName},#{creationDate})
+    </insert>
+    <update id="modifyRole">
+           update smbms_role
+        <trim prefix="set" suffixOverrides="," suffix="where id = #{id}">
+            <if test="roleName!=null and roleName!=''">roleName = #{roleName},</if>
+            <if test="roleCode!=null and roleCode!=''">roleCode = #{roleCode},</if>
+            <if test="modifyDate!=null">modifyDate = #{modifyDate},</if>
+        </trim>
+    </update>
+    <delete id="deleteRoleById">
+        delete from smbms_role where id=#{roleId}
+    </delete>
+    <select id="getRoleList" resultType="cn.smbms.pojo.Role">
+        select * from smbms_role
+    </select>
+    <select id="getRoleById" resultType="cn.smbms.pojo.Role">
+         select * from smbms_role where id=#{id}
+    </select>
+
+</mapper>
